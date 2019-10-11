@@ -5,6 +5,7 @@ import sys, pygame
 #import pygame.examples.chimp as xmpl # 	— 	hit the moving chimp
 #import pygame.examples.moveit as xmpl # 	— 	display animated objects on the screen
 import pygame.examples.fonty as xmpl # 	— 	run a font rendering example
+import pygame.gfxdraw
 #import pygame.examples.freetype_misc as xmpl # 	— 	run a FreeType rendering example
 #import pygame.examples.vgrade as xmpl # 	— 	display a vertical gradient
 #import pygame.examples.eventlist as xmpl # 	— 	display pygame events
@@ -32,55 +33,41 @@ import pygame.examples.fonty as xmpl # 	— 	run a font rendering example
 
 pygame.init()
 
-k = 5
-n = 137
-size = width, height = 64 * k, 48 * k
+width_offset = 200
+height_offset = 200
 
-speed = [2, 2]
-black = 32, 32, 32
+map = pygame.image.load("FullSizeRender.jpeg")
+map_size = map_width, map_height = map.get_width()//2, map.get_height()//2
+size = width, height = map_size[0] + width_offset, map_size[1] + height_offset
+map_size = width, height = map.get_width()//2, map.get_height()//2
+map = pygame.transform.scale(map, (map_size[0],map_size[1]))
 
-screen = pygame.display.set_mode(size, pygame.RESIZABLE)
 
-balls = []
-ballrects = []
-speeds = []
+black = 100, 100, 100
 
-for i in range(n):
-  ball = pygame.image.load("intro_ball.gif")
-  ballrect = ball.get_rect().move((i * 173) % (width - 62), (i * 137) % (height - 62))
-  
-  balls.append(ball)
-  ballrects.append(ballrect)
-  speed = [2, 2]
-  speeds.append(speed)
-
-#xmpl.main()
+screen = pygame.display.set_mode(size)
+pygame.gfxdraw.hline(screen, 5, 300, 522, (255,255,255))
 
 while 1:
     for event in pygame.event.get():
         print(event)
-        if event.type == pygame.QUIT: 
+        if event.type == pygame.QUIT:
            sys.exit()
-        if event.type == pygame.KEYUP and event.key == 27: 
-           sys.exit()
-        if event.type == pygame.MOUSEBUTTONUP: 
-           sys.exit()
+        if event.type == pygame.KEYUP and event.key == 27:
+            pass
+           #sys.exit()
+        if event.type == pygame.MOUSEBUTTONUP:
+            pass
+           #sys.exit()
         if event.type == pygame.VIDEORESIZE:
            width = event.w
            height = event.h
-           size = width, height 
-           screen = pygame.display.set_mode(size, pygame.RESIZABLE)
+           size = width, height
+           map = pygame.transform.scale(map, (width,height))
+           screen.blit(map,(width_offset,0))
+           screen = pygame.display.set_mode(size)
 
     screen.fill(black)
-    for i in range(n):
-      ballrects[i] = ballrects[i].move(speeds[i])
-      if ballrects[i].left < 0 or ballrects[i].right > width:
-          speeds[i][0] = -speeds[i][0]
-
-      if ballrects[i].top < 0 or ballrects[i].bottom > height:
-          speeds[i][1] = -speeds[i][1]
-
-      screen.blit(balls[i], ballrects[i])
-#    print(speeds)
+    screen.blit(map,(0,0))
     pygame.display.flip()
     pygame.time.delay(10)
